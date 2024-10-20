@@ -3,5 +3,6 @@
 
 # Techdebt
 - add organization styles are broken
-- figure out clerk authorization
+- figure out clerk authorization modal
+- clikcing on team boards should reset search
 

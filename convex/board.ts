@@ -43,13 +43,23 @@ export const remove = mutation({
     id: v.id("boards"),
   },
   handler: async (ctx, args) => {
-    const identity = ctx.auth.getUserIdentity();
+    const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Unathorized");
     }
 
-    // remember to delete favouites
-    await ctx.db.delete(args.id);
+    const existingFavorite = await ctx.db
+      .query("userFavorites")
+      .withIndex("by_user_board", (q) =>
+        q.eq("userId", identity.subject).eq("boardId", args.id)
+      )
+      .unique();
+
+    if (existingFavorite) {
+      await ctx.db.delete(existingFavorite._id);
+    }
+
+    await await ctx.db.delete(args.id);
   },
 });
 
